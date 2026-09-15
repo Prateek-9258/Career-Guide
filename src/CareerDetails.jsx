@@ -2023,7 +2023,7 @@ h1{
     inset:0;
     background:rgba(2,6,23,0.85);
     backdrop-filter:blur(14px);
-    z-index:9999;
+    z-index:99999;
     padding:18px;
     overflow-y:auto;
 }
@@ -2151,6 +2151,254 @@ h1{
         grid-template-columns:1fr;
     }
 }
+
+/* =====================================================
+   COURSE MODAL - COLLEGE LIST + ALIGNMENT FIX
+===================================================== */
+
+.modal-box{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.modal-box > div:first-child{
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+#mTitle{
+    word-break:break-word;
+}
+
+.cd-head-wrap{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+}
+
+.cd-chip{
+    display:inline-flex;
+    align-items:center;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.16);
+    color:#e2e8f0;
+    padding:5px 12px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.cd-chip.primary{
+    background:rgba(56,189,248,0.18);
+    border-color:rgba(56,189,248,0.5);
+    color:#bae6fd;
+    font-weight:800;
+}
+
+.cd-chip.good{
+    background:rgba(34,197,94,0.16);
+    border-color:rgba(34,197,94,0.45);
+    color:#86efac;
+    font-weight:800;
+}
+
+.cd-sec-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+}
+
+.cd-count{
+    display:inline-flex;
+    align-items:center;
+    background:rgba(56,189,248,0.14);
+    border:1px solid rgba(56,189,248,0.38);
+    color:#7dd3fc;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    white-space:nowrap;
+}
+
+.cd-hint{
+    font-size:10.5px;
+    color:#64748b;
+    font-weight:600;
+}
+
+.cd-empty{
+    font-size:12.5px;
+    color:#94a3b8;
+    line-height:1.7;
+}
+
+.cd-scroll{
+    max-height:470px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:4px 10px 6px 4px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(56,189,248,0.5) transparent;
+}
+
+.cd-scroll::-webkit-scrollbar{width:8px}
+.cd-scroll::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);border-radius:8px}
+.cd-scroll::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.45);border-radius:8px}
+.cd-scroll::-webkit-scrollbar-thumb:hover{background:rgba(56,189,248,0.7)}
+
+.college-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:12px;
+    align-items:stretch;
+}
+
+.college-item{
+    display:flex;
+    align-items:stretch;
+    gap:12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:14px;
+    padding:12px;
+    min-width:0;
+    height:100%;
+    box-sizing:border-box;
+    cursor:pointer;
+    transition:transform .25s ease,border-color .25s ease,background .25s ease;
+}
+
+.college-item:hover{
+    transform:translateY(-3px);
+    border-color:rgba(56,189,248,0.5);
+    background:rgba(56,189,248,0.08);
+}
+
+.college-item img{
+    width:92px;
+    height:92px;
+    flex:0 0 92px;
+    border-radius:10px;
+    object-fit:cover;
+    background:rgba(255,255,255,0.06);
+    align-self:flex-start;
+}
+
+.ci-body{
+    display:flex;
+    flex-direction:column;
+    flex:1 1 auto;
+    min-width:0;
+    gap:4px;
+}
+
+.ci-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+}
+
+.ci-name{
+    flex:1 1 auto;
+    min-width:0;
+    font-size:12.5px;
+    font-weight:800;
+    color:#e2e8f0;
+    line-height:1.35;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    word-break:break-word;
+}
+
+.ci-head .badge{
+    flex:0 0 auto;
+    align-self:flex-start;
+    white-space:nowrap;
+}
+
+.ci-loc{
+    font-size:10.5px;
+    color:#94a3b8;
+    line-height:1.45;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.ci-fee{
+    font-size:11px;
+    color:#cbd5e1;
+    line-height:1.5;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    word-break:break-word;
+}
+
+.ci-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+}
+
+.ci-tags .entrance{
+    margin-top:0;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.ci-foot{
+    margin-top:auto;
+    padding-top:8px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+
+.ci-more{
+    font-size:10.5px;
+    font-weight:700;
+    color:#94a3b8;
+    white-space:nowrap;
+}
+
+.college-item:hover .ci-more{color:#7dd3fc}
+
+.sec{
+    margin-top:20px;
+}
+
+.sec-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+}
+
+@media(max-width:760px){
+    .modal-box{padding:18px;border-radius:18px;margin:10px auto}
+    .college-grid{grid-template-columns:1fr}
+    .cd-scroll{max-height:none;overflow:visible;padding-right:0}
+    .cd-hint{display:none}
+    .college-item img{width:74px;height:74px;flex:0 0 74px}
+    .ci-loc{white-space:normal}
+}
+
 `;
 
 // ------------------------------------------------------------------
@@ -5744,307 +5992,339 @@ async function loadAdditionalColleges(){
        COURSE DETAILS
     ===================================================== */
 
+    function cdNorm(value){
+      return String(value||"").toLowerCase().replace(/[^a-z0-9]+/g,"");
+    }
+
+    /*
+      Har family me:
+      c   -> course card ke naam par test hota hai
+      m   -> college.courses ki har entry par test hota hai (main match)
+      alt -> agar main match se 0 college mile to ye use hota hai
+      Order important hai - upar wali family pehle match hogi.
+    */
+    const cdCourseFamilies=[
+      {id:"govtjob", c:/^(sscgd|ssc|railway|bank|nda|upsc|ias|ips|ifs|constable|clerk|po)/, m:null},
+
+      {id:"law",     c:/llb|llm|law|judiciary|pcsj|advocate/,
+                     m:/llb|llm|^law|legal/},
+
+      {id:"agri",    c:/agricultur|horticultur|forestry|dairy|fisher|foodtech|agribusiness|agri/,
+                     m:/agri|horticultur|forestry|dairy|fisher|foodtech|veterinar/},
+
+      {id:"mbbs",    c:/mbbs/,
+                     m:/mbbs|^medical|medicine/},
+
+      {id:"bds",     c:/^bds|dental/,
+                     m:/^bds|dental/},
+
+      {id:"ayush",   c:/bams|bhms|bums|ayurved|homeo|unani|siddha/,
+                     m:/bams|bhms|bums|ayurved|homeo|unani|ayush/,
+                     alt:/mbbs|^medical|medicine|pharma/},
+
+      {id:"pharma",  c:/pharma/,
+                     m:/pharma/},
+
+      {id:"nursing", c:/nursing|^gnm|^anm/,
+                     m:/nursing|^gnm|^anm/},
+
+      {id:"physio",  c:/^bpt|^mpt|physio/,
+                     m:/^bpt|^mpt|physio/,
+                     alt:/nursing|mbbs|^medical|paramed/},
+
+      {id:"optom",   c:/optom/,
+                     m:/optom|ophthal/,
+                     alt:/nursing|mbbs|^medical|paramed/},
+
+      {id:"paramed", c:/dmlt|bmlt|radiolog|ottechnician|paramed|mlt/,
+                     m:/dmlt|bmlt|radiolog|paramed|mlt|alliedhealth/,
+                     alt:/nursing|mbbs|^medical|pharma/},
+
+      {id:"mca",     c:/^mca/,
+                     m:/^mca/,
+                     alt:/^bca|computerapplication/},
+
+      {id:"bca",     c:/^bca/,
+                     m:/^bca|computerapplication/},
+
+      {id:"mtech",   c:/^mtech/,
+                     m:/^mtech/,
+                     alt:/^btech|engineering/},
+
+      {id:"dipengg", c:/^diploma(civil|mechanical|electrical|electronics|computer|automobile)?engineering|polytechnic/,
+                     m:/^diploma|polytechnic|^iti|^btech|engineering/},
+
+      {id:"btech",   c:/btech|^be$|engineering/,
+                     m:/^btech|^be$|engineering/,
+                     alt:/^mtech|polytechnic|^diploma/},
+
+      {id:"design",  c:/^bdes|^mdes|design|fashion|interior|animation|architect/,
+                     m:/^bdes|^mdes|design|fashion|interior|architect|animation/,
+                     alt:/^bfa|arts|^ba$/},
+
+      {id:"it",      c:/aiml|artificialintelligence|machinelearning|datascience|cyber|cloud|webdev|fullstack|software|bscit|bsccs|computer/,
+                     m:/^bca|^mca|^bscit|^bsccs|^bsccomputer|^bscdatascience|computerapplication|computerscience|informationtechnology/,
+                     alt:/^btech|engineering/},
+
+      {id:"mba",     c:/^mba|^pgdm|management/,
+                     m:/^mba|^pgdm|management/,
+                     alt:/^bba|^bcom|commerce/},
+
+      {id:"bba",     c:/^bba|^bms|^bbm/,
+                     m:/^bba|^bms$|^bbm$|businessadministration/,
+                     alt:/management|^bcom|commerce/},
+
+      {id:"mcom",    c:/^mcom/,
+                     m:/^mcom/,
+                     alt:/^bcom|commerce/},
+
+      {id:"bcom",    c:/^bcom/,
+                     m:/^bcom|commerce/},
+
+      {id:"finance", c:/^ca$|^cs$|^cfa|banking|finance|account/,
+                     m:/^bcom|^mcom|commerce|^bba|^mba/},
+
+      {id:"msc",     c:/^msc/,
+                     m:/^msc/,
+                     alt:/^bsc|science/},
+
+      {id:"bsc",     c:/^bsc/,
+                     m:/^bsc|science/},
+
+      {id:"ma",      c:/^ma$|^mahons/,
+                     m:/^ma$|^mahons/,
+                     alt:/^ba$|arts/},
+
+      {id:"ba",      c:/^ba|arts|humanit|journalis|masscomm|psycholog|sociolog|politic|histor|english/,
+                     m:/^ba$|^bahons|^baprogram|arts|humanit|journalis|masscomm/}
+    ];
+
+    function cdFamilyFor(courseName){
+      const key=cdNorm(courseName);
+      for(const fam of cdCourseFamilies){
+        if(fam.c.test(key)) return fam;
+      }
+      return null;
+    }
+
+    /* College govt hai ya private - type + name dono se check */
+    function cdIsGovt(c){
+      const type=((c && c.type)||"");
+      const text=type+" "+((c && c.name)||"");
+      if(/private|pvt|deemed|self\s*financ/i.test(type)) return false;
+      return /govt|government|public|central|state univ|rajkiya|iit|nit|iiit|aiims|jipmer|nlu/i.test(text);
+    }
+
+    /* Ek pass - diye gaye regex se colleges collect karo */
+    function cdCollect(courseName, regex, loose){
+      const key=cdNorm(courseName);
+      const seen=new Set();
+      const out=[];
+
+      colleges.forEach((c,i)=>{
+        if(!c || !c.name) return;
+        const list=Array.isArray(c.courses)?c.courses:[];
+        if(!list.length) return;
+
+        let hit=false;
+        for(const entry of list){
+          const e=cdNorm(entry);
+          if(!e) continue;
+          if(e===key){ hit=true; break; }
+          if(regex && regex.test(e)){ hit=true; break; }
+          if(loose && e.length>=3 && key.length>=3 && (e.includes(key)||key.includes(e))){ hit=true; break; }
+        }
+        if(!hit) return;
+
+        const dedupe=cdNorm(c.name)+"|"+cdNorm(c.city);
+        if(seen.has(dedupe)) return;
+        seen.add(dedupe);
+        out.push({ data:c, index:i });
+      });
+
+      return out;
+    }
+
+    /* Course ke hisaab se poore database se colleges */
+    function cdCollegesForCourse(courseName){
+      const fam=cdFamilyFor(courseName);
+      if(fam && fam.id==="govtjob") return [];
+
+      let out=[];
+
+      if(fam && fam.m) out=cdCollect(courseName, fam.m, false);
+      if(!out.length && fam && fam.alt) out=cdCollect(courseName, fam.alt, false);
+      if(!out.length) out=cdCollect(courseName, null, true);
+
+      /* Govt pehle, phir naam ke hisaab se */
+      out.sort((a,b)=>{
+        const ga=cdIsGovt(a.data)?0:1;
+        const gb=cdIsGovt(b.data)?0:1;
+        if(ga!==gb) return ga-gb;
+        return String(a.data.name).localeCompare(String(b.data.name));
+      });
+
+      return out;
+    }
+
+    /* College ki fee string me se sirf isi course ki fee nikaalo */
+    function cdPickFee(college, courseName){
+      const raw=String((college && college.fee)||"").trim();
+      if(!raw) return "Fee: college se confirm karein";
+      const key=cdNorm(courseName);
+
+      const parts=raw.split(",");
+      for(const part of parts){
+        const idx=part.indexOf(":");
+        if(idx<0) continue;
+        const label=cdNorm(part.slice(0,idx));
+        if(!label) continue;
+        if(label.includes(key)||(key.length>=3 && key.includes(label))) return part.trim();
+      }
+      return raw.length>78 ? raw.slice(0,78)+"..." : raw;
+    }
+
+    /* Modal ke andar dikhne wala single college card */
+    function cdCollegeCard(item, courseName){
+      const c=item.data;
+      const i=item.index;
+      const govt=cdIsGovt(c);
+      const fallback=realCampusImages[i%realCampusImages.length];
+      const img=getSafeCollegeImage(c,i);
+      const name=escapeHtml(c.name);
+      const loc=escapeHtml([c.city,c.state].filter(Boolean).join(", ")||"India");
+      const type=escapeHtml(c.type||(govt?"Government":"Private"));
+      const fee=escapeHtml(cdPickFee(c,courseName));
+      const adm=escapeHtml(c.admission||"Merit / Entrance Based");
+      const link=escapeHtml(c.link||"#");
+      const safeName=String(c.name).replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+
+      return `
+      <div class="college-item" title="${name}" onclick="openCollegeByName('${safeName}')">
+        <img src="${img}" alt="${name}" loading="lazy"
+             onerror="this.onerror=null;this.src='${fallback}'">
+        <div class="ci-body">
+          <div class="ci-head">
+            <span class="ci-name">${name}</span>
+            <span class="badge ${govt?"govt":"pvt"}">${govt?"Govt":"Private"}</span>
+          </div>
+          <div class="ci-loc">${loc} &middot; ${type}</div>
+          <div class="ci-fee">${fee}</div>
+          <div class="ci-tags"><span class="entrance">Entrance: ${adm}</span></div>
+          <div class="ci-foot">
+            <a href="${link}" target="_blank" rel="noopener"
+               class="college-link" onclick="event.stopPropagation()">Website &rarr;</a>
+            <span class="ci-more">Full Details &rarr;</span>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    /* Govt / Private section ka poora HTML */
+    function cdRenderSection(list, courseName, label, emptyMsg){
+      if(!list.length){
+        return `<div class="info cd-empty">${emptyMsg}</div>`;
+      }
+
+      const cards=list.map(item=>cdCollegeCard(item,courseName)).join("");
+
+      return `
+      <div class="cd-sec-top">
+        <span class="cd-count">${list.length} ${escapeHtml(label)}</span>
+        <span class="cd-hint">Click on any card to see full details</span>
+      </div>
+      <div class="cd-scroll">
+        <div class="college-grid">${cards}</div>
+      </div>`;
+    }
+
+    /* Course ka meta (duration / fee / package) category data se */
+    function cdFindCourseMeta(name){
+      for(const key in data){
+        const found=(data[key].courses||[]).find(c=>c.name===name);
+        if(found) return { meta:found, category:data[key].title };
+      }
+      return null;
+    }
+
+    function cdRecruiters(famId){
+      const map={
+        it:"TCS, Infosys, Wipro, HCL, Accenture, Cognizant, Tech Mahindra",
+        bca:"TCS, Infosys, Wipro, HCL, Capgemini, Cognizant",
+        mca:"TCS, Infosys, Accenture, IBM, Oracle, Deloitte",
+        btech:"TCS, L&T, Bosch, Maruti Suzuki, Infosys, Amazon",
+        mtech:"L&T, Siemens, ISRO / DRDO, Bosch, Qualcomm, Amazon",
+        dipengg:"L&T, Tata Motors, Maruti Suzuki, BHEL, NTPC, Local Industries",
+        mba:"Deloitte, KPMG, ICICI Bank, HDFC Bank, Amazon, Reliance",
+        bba:"HDFC Bank, Axis Bank, Zomato, Flipkart, Startups",
+        bcom:"Big 4 Audit Firms, Banks, NBFCs, CA Firms",
+        mcom:"Banks, Audit Firms, Colleges, Finance Companies",
+        finance:"ICICI, HDFC, Axis Bank, Deloitte, EY, PwC, KPMG",
+        mbbs:"AIIMS, Apollo, Fortis, Max Healthcare, Govt Hospitals",
+        bds:"Dental Clinics, Apollo White, Clove Dental, Govt Hospitals",
+        ayush:"Ayush Hospitals, Patanjali, Dabur, Govt Dispensaries",
+        pharma:"Sun Pharma, Cipla, Dr. Reddy's, Mankind, Apollo Pharmacy",
+        nursing:"AIIMS, Apollo, Fortis, Medanta, Govt Health Dept",
+        physio:"Apollo, Fortis, Sports Academies, Private Clinics",
+        optom:"Lenskart, Titan Eye+, Dr. Agarwal's Eye Hospital",
+        paramed:"Dr. Lal PathLabs, SRL Diagnostics, Apollo, Metropolis",
+        law:"Khaitan & Co, Trilegal, AZB & Partners, Corporate Legal Teams",
+        agri:"IFFCO, ITC Agri, Mahindra Agri, NABARD, Godrej Agrovet",
+        design:"Lenskart, Nykaa, Zomato, Design Studios, Ad Agencies",
+        bsc:"Labs, Research Institutes, Teaching, Pharma Companies",
+        msc:"Research Labs, DRDO, Colleges, Pharma & Chemical Firms",
+        ba:"Media Houses, Schools, NGOs, Govt Departments, BPOs"
+      };
+      return map[famId]||"TCS, Infosys, HCL, Wipro, Banks, Govt Departments";
+    }
+
+    function cdCareerInfo(name, total, govtCount, pvtCount){
+      const found=cdFindCourseMeta(name);
+      const fam=cdFamilyFor(name);
+      const rows=[];
+
+      if(found){
+        rows.push("<b>Category:</b> "+escapeHtml(found.category));
+        rows.push("<b>Duration:</b> "+escapeHtml(found.meta.dur));
+        rows.push("<b>Average Fee:</b> "+escapeHtml(found.meta.fee));
+        rows.push("<b>Expected Package:</b> "+escapeHtml(found.meta.sal));
+      }
+
+      rows.push("<b>Colleges Available:</b> "+total+" ("+govtCount+" Govt + "+pvtCount+" Private)");
+      rows.push("<b>Top Recruiters:</b> "+cdRecruiters(fam?fam.id:""));
+
+      return rows.join("<br>");
+    }
+
+    /* =====================================================
+       COURSE DETAILS - ab poora college database use hota hai
+    ===================================================== */
+
     function getDetail(name){
 
-    let g="";
-    let p="";
+      const matched=cdCollegesForCourse(name);
+      const govtList=matched.filter(item=>cdIsGovt(item.data));
+      const pvtList=matched.filter(item=>!cdIsGovt(item.data));
 
-    if(name.includes("BCA") ||
-    name.includes("B.Com") ||
-    name.includes("BBA") ||
-    name==="MCA"){
+      const g=cdRenderSection(
+        govtList,
+        name,
+        "Government Colleges",
+        "Is course ke liye abhi koi government college database me listed nahi hai. Neeche private colleges dekhein ya College Finder me search karein."
+      );
 
-    g=`
-    <div class="college-grid">
+      const p=cdRenderSection(
+        pvtList,
+        name,
+        "Private Colleges",
+        "Is course ke liye abhi koi private college database me listed nahi hai. Upar government colleges check karein."
+      );
 
-    ${card(
-    getRealCollegeImage("CCSU Meerut Campus", "https://ccsu-scriet.github.io/international-conference/assest/hero-new2.jpg"),
-    "CCSU Meerut Campus - "+name,
-    "Govt",
-    "₹36k/yr",
-    "CUET",
-    "https://ccsuniversity.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    getRealCollegeImage("Rajkiya Degree College Bulandshahr", "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400"),
-    "Rajkiya Degree College Bulandshahr - "+name,
-    "Govt",
-    "₹15k/yr",
-    "CUET",
-    "https://ccsuniversity.ac.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    p=`
-    <div class="college-grid">
-
-    ${card(
-    getRealCollegeImage("IP College Campus-2 Bulandshahr", "https://images.unsplash.com/photo-1498243796661-1e5c1c1c1e6b?w=400"),
-    "IP College Campus-2 Bulandshahr - "+name,
-    "Private",
-    "₹35k/yr",
-    "CUET/Merit",
-    "https://ipcollege.edu.in",
-    "Website"
-    )}
-
-    ${card(
-    getRealCollegeImage("Jaypee University Anoopshahr", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400"),
-    "Jaypee University Anoopshahr - "+name,
-    "Private",
-    "₹80k-90k/yr",
-    "JUAT/CUET",
-    "https://www.jaypeeu.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    getRealCollegeImage("Galgotias University Greater Noida", "https://images.unsplash.com/photo-1562774053-701939374585?w=400"),
-    "Galgotias University Greater Noida - "+name,
-    "Private",
-    "₹90k/yr",
-    "CUET",
-    "https://galgotiasuniversity.edu.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    }
-
-    else if(
-    name.includes("B.Tech") ||
-    name.includes("Engineering") ||
-    name.includes("AI") ||
-    name.includes("Cyber") ||
-    name.includes("Diploma")
-    ){
-
-    g=`
-    <div class="college-grid">
-
-    ${card(
-    "https://sunstone.edu.in/blogwp/wp-content/uploads/2021/09/NIT-kurukshetra.jpeg",
-    "IIT Delhi - Engineering",
-    "Govt",
-    "Official Fee",
-    "JEE Advanced",
-    "https://home.iitd.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400",
-    "DTU Delhi - Engineering",
-    "Govt",
-    "Official Fee",
-    "JEE Main",
-    "https://dtu.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    "https://ccsu-scriet.github.io/international-conference/assest/hero-new2.jpg",
-    "NSUT Delhi - Engineering",
-    "Govt",
-    "Official Fee",
-    "JEE Main",
-    "https://nsut.ac.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    p=`
-    <div class="college-grid">
-
-    ${card(
-    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400",
-    "Jaypee University Anoopshahr - Engineering",
-    "Private",
-    "₹1.35L/yr",
-    "JEE/JUAT",
-    "https://www.jaypeeu.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    "https://images.unsplash.com/photo-1562774053-701939374585?w=400",
-    "ABES Engineering College Ghaziabad",
-    "Private",
-    "₹1.35L/yr",
-    "JEE",
-    "https://abes.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    "https://images.unsplash.com/photo-1498243796661-1e5c1c1c1e6b?w=400",
-    "Galgotias University Greater Noida",
-    "Private",
-    "₹1.6L/yr",
-    "CUET/JEE",
-    "https://galgotiasuniversity.edu.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    }
-
-    else if(
-    name.includes("B.Pharma") ||
-    name.includes("D.Pharma") ||
-    name.includes("M.Pharma")
-    ){
-
-    g=`
-    <div class="college-grid">
-
-    ${card(
-    "https://indiaeducation.net/wp-content/uploads/2022/07/AIIMS_Delhi.jpg",
-    "DIPSAR Delhi - Pharmacy",
-    "Govt",
-    "₹30k/yr",
-    "CUET",
-    "https://dpsru.edu.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    p=`
-    <div class="college-grid">
-
-    ${card(
-    "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=400",
-    "IIMT College Greater Noida - Pharmacy",
-    "Private",
-    "₹1L/yr",
-    "CUET",
-    "https://iimtindia.net",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    }
-
-    else if(
-    name==="MBBS" ||
-    name==="BDS" ||
-    name==="BAMS" ||
-    name==="BHMS"
-    ){
-
-    g=`
-    <div class="college-grid">
-
-    ${card(
-    "https://indiaeducation.net/wp-content/uploads/2022/07/AIIMS_Delhi.jpg",
-    "AIIMS Delhi - Medical",
-    "Govt",
-    "Official Fee",
-    "NEET UG",
-    "https://aiims.edu",
-    "Website"
-    )}
-
-    ${card(
-    "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=400",
-    "MAMC Delhi - Medical",
-    "Govt",
-    "Official Fee",
-    "NEET",
-    "https://mamc.ac.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    p=`
-    <div class="college-grid">
-
-    ${card(
-    "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400",
-    "Sharda Medical College Greater Noida",
-    "Private",
-    "₹12L/yr",
-    "NEET",
-    "https://sharda.ac.in",
-    "Website"
-    )}
-
-    ${card(
-    "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=400",
-    "Santosh Medical College Ghaziabad",
-    "Private",
-    "₹11L/yr",
-    "NEET",
-    "https://santosh.ac.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    }
-
-    else{
-
-    g=`
-    <div class="college-grid">
-
-    ${card(
-    "https://ccsu-scriet.github.io/international-conference/assest/hero-new2.jpg",
-    "CCSU Meerut - ${name}",
-    "Govt",
-    "Official Fee",
-    "CUET",
-    "https://ccsuniversity.ac.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    p=`
-    <div class="college-grid">
-
-    ${card(
-    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400",
-    "Jaypee University Anoopshahr - ${name}",
-    "Private",
-    "Official Fee",
-    "CUET",
-    "https://www.jaypeeu.ac.in",
-    "Website"
-    )}
-
-    </div>
-    `;
-
-    }
-
-    return{
-    govt:g,
-    pvt:p,
-    career:
-    "<b>Fresher:</b> ₹2.5-8 LPA<br>"+
-    "<b>After 2 Yrs:</b> ₹5-15 LPA<br>"+
-    "<b>Top Recruiters:</b> TCS, Infosys, HCL, Wipro"
-    };
+      return{
+        govt:g,
+        pvt:p,
+        career:cdCareerInfo(name,matched.length,govtList.length,pvtList.length)
+      };
 
     }
 
@@ -6846,8 +7126,18 @@ async function loadAdditionalColleges(){
     document.getElementById("govtJobSections")
     .style.display="none";
 
+    const cdMeta=cdFindCourseMeta(name);
+    const cdTotal=cdCollegesForCourse(name).length;
+
     document.getElementById("mFull")
-    .innerHTML=name;
+    .innerHTML=
+    `<div class="cd-head-wrap">
+       <span class="cd-chip primary">${escapeHtml(name)}</span>
+       ${cdMeta?`<span class="cd-chip">${escapeHtml(cdMeta.meta.dur)}</span>`:""}
+       ${cdMeta?`<span class="cd-chip">${escapeHtml(cdMeta.meta.fee)}</span>`:""}
+       ${cdMeta?`<span class="cd-chip">${escapeHtml(cdMeta.meta.sal)}</span>`:""}
+       <span class="cd-chip good">${cdTotal} Colleges Found</span>
+     </div>`;
 
     document.getElementById("mGovt")
     .innerHTML=d.govt;
@@ -6946,6 +7236,7 @@ async function loadAdditionalColleges(){
     window.goToCollegePage = goToCollegePage;
     window.changePageSize = changePageSize;
     window.openCollegeModalByIndex = openCollegeModalByIndex;
+    window.openCollegeByName = openCollegeModal;
     window.showCourses = showCourses;
     window.openDetails = openDetails;
   }, []);
