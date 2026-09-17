@@ -1591,6 +1591,21 @@ if (savedEmail) {
 
 }, []);
 
+// Agar user pehle se logged in hai (localStorage me flag set hai),
+// to login/signup form dikhane ki zaroorat nahi — seedha app ke
+// andar bhej do. Ye check tab tak true rahega jab tak user khud
+// logout na kare (logout par localStorage clear/flag false hota hai).
+useEffect(() => {
+const alreadyLoggedIn =
+localStorage.getItem("isLoggedIn") === "true";
+
+if (alreadyLoggedIn) {
+  navigate("/career-vision", { replace: true });
+}
+
+
+}, [navigate]);
+
 // localStorage me saved users ki list read karta hai.
 const getUsers = () => {
 try {
