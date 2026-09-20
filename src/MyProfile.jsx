@@ -14,6 +14,7 @@ export default function MyProfile() {
   });
 
   const [photo, setPhoto] = useState(null);
+  const [quizResult, setQuizResult] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
   const [photoOpen, setPhotoOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -76,6 +77,13 @@ export default function MyProfile() {
 
   if (savedPhoto) {
     setPhoto(savedPhoto);
+  }
+
+  try {
+    const savedQuiz = localStorage.getItem("careerVisionQuizResult");
+    if (savedQuiz) setQuizResult(JSON.parse(savedQuiz));
+  } catch {
+    setQuizResult(null);
   }
 
   return () => stopCamera();
@@ -548,7 +556,7 @@ export default function MyProfile() {
             <div className="career-box">
 
               <div className="career-icon">
-                💻
+                {quizResult ? quizResult.icon : "💻"}
               </div>
 
               <div className="career-content">
@@ -558,13 +566,15 @@ export default function MyProfile() {
                 </span>
 
                 <h3>
-                  Explore Your Career
+                  {quizResult
+                    ? quizResult.career
+                    : "Explore Your Career"}
                 </h3>
 
                 <p>
-                  Complete the CareerVision quiz
-                  to discover a career path
-                  personalized for you.
+                  {quizResult
+                    ? "Based on your profile and quiz answers, this is your best career match."
+                    : "Complete the CareerVision quiz to discover a career path personalized for you."}
                 </p>
 
               </div>
@@ -616,7 +626,9 @@ export default function MyProfile() {
               <div className="score-circle">
 
                 <div className="score-inner">
-                  <strong>0%</strong>
+                  <strong>
+                    {quizResult ? `${quizResult.score}%` : "0%"}
+                  </strong>
                   <small>MATCH</small>
                 </div>
 
@@ -629,20 +641,22 @@ export default function MyProfile() {
                 </span>
 
                 <h4>
-                  Quiz Not Completed
+                  {quizResult
+                    ? "✓ Quiz Completed"
+                    : "Quiz Not Completed"}
                 </h4>
 
                 <p>
-                  Take the career quiz to
-                  discover your personalized
-                  career match.
+                  {quizResult
+                    ? `Top match: ${quizResult.icon} ${quizResult.career}`
+                    : "Take the career quiz to discover your personalized career match."}
                 </p>
 
                 <button
                   onClick={() => navigate("/quiz")}
                   className="text-button"
                 >
-                  Take Quiz →
+                  {quizResult ? "Retake Quiz →" : "Take Quiz →"}
                 </button>
 
               </div>
@@ -960,6 +974,7 @@ export default function MyProfile() {
                 <option value="">
                   Select Stream
                 </option>
+                <option value="Science">Science</option>
                 <option value="PCM">PCM</option>
                 <option value="PCB">PCB</option>
                 <option value="Commerce">
@@ -1360,4 +1375,3 @@ function Select({
     </div>
   );
 }
-

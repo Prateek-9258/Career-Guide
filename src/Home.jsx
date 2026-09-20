@@ -163,6 +163,37 @@ export default function Home() {
     }));
   };
 
+  // Home ki details ko My Profile ke saved data me merge karta hai.
+  // Purana data (class, etc.) safe rehta hai, sirf Home ke fields update hote hain.
+  const saveToProfile = () => {
+    let existing = {};
+
+    try {
+      const saved = localStorage.getItem("careerVisionProfile");
+      if (saved) existing = JSON.parse(saved) || {};
+    } catch {
+      existing = {};
+    }
+
+    const updatedProfile = {
+      ...existing,
+      name: form.name.trim(),
+      stream: form.stream,
+      percentage: form.percentage,
+      interest: form.interest,
+      budget: form.budget,
+    };
+
+    try {
+      localStorage.setItem(
+        "careerVisionProfile",
+        JSON.stringify(updatedProfile)
+      );
+    } catch {
+      // storage full / blocked ho to quiz phir bhi chalna chahiye
+    }
+  };
+
   const startQuiz = () => {
     if (
       !form.name.trim() ||
@@ -181,6 +212,8 @@ export default function Home() {
       alert("Please enter a valid percentage between 0 and 100.");
       return;
     }
+
+    saveToProfile();
 
     setQuestionIndex(0);
     setAnswers([]);
