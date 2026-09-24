@@ -611,6 +611,12 @@ body {
   gap: 25px;
 }
 
+@property --score {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .score-circle {
   width: 125px;
   height: 125px;
@@ -618,9 +624,28 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: conic-gradient(#765bff 0deg, rgba(255,255,255,.08) 0deg);
+
+  background: conic-gradient(
+    #765bff 0deg,
+    #765bff var(--score),
+    rgba(255, 255, 255, 0.08) var(--score),
+    rgba(255, 255, 255, 0.08) 360deg
+  );
+
   position: relative;
   flex-shrink: 0;
+
+  animation: scoreAnimation 1.5s ease-out forwards;
+}
+
+@keyframes scoreAnimation {
+  from {
+    --score: 0deg;
+  }
+
+  to {
+    --score: var(--final-score);
+  }
 }
 
 .score-circle::before {

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import Navbar from "./Navbar.jsx";
+import { api } from "./api.js";
 // ------------------------------------------------------------------
 // STYLES
 // ------------------------------------------------------------------
@@ -6345,11 +6346,17 @@ async function loadAdditionalColleges(){
     let favorites=new Set();
     let compareIndexes=[];
 
-    try{
-      favorites=new Set(JSON.parse(localStorage.getItem("career-details-favorite-colleges")||"[]"));
-    }catch(error){
-      favorites=new Set();
-    }
+    // Favorites ab account ke saath server par save hote hain.
+    // Page khulne par server se load karke list dobara draw hoti hai.
+    let isMounted=true;
+
+    api.get("/favorites").then(data=>{
+      if(!isMounted) return;
+      favorites=new Set(data.favorites||[]);
+      applyCollegeFilters();
+    }).catch(()=>{
+      // login nahi hai / server band hai: favorites khaali se shuru
+    });
 
     function escapeHtml(value){
       return String(value??"").replace(/[&<>"']/g,char=>({
@@ -6361,11 +6368,14 @@ async function loadAdditionalColleges(){
       return c.name+"|"+c.city+"|"+c.state;
     }
 
+    // Requests ek ke baad ek jaati hain, taaki tez clicks me bhi last state hi save ho.
+    let favoritesSaving=Promise.resolve();
+
     function saveFavorites(){
-      localStorage.setItem(
-        "career-details-favorite-colleges",
-        JSON.stringify(Array.from(favorites))
-      );
+      const snapshot=Array.from(favorites);
+      favoritesSaving=favoritesSaving
+        .then(()=>api.put("/favorites",{favorites:snapshot}))
+        .catch(()=>{});
     }
 
     function isFavorite(c){
@@ -7239,6 +7249,10 @@ async function loadAdditionalColleges(){
     window.openCollegeByName = openCollegeModal;
     window.showCourses = showCourses;
     window.openDetails = openDetails;
+
+    return () => {
+      isMounted=false;
+    };
   }, []);
 
   // ============================================================

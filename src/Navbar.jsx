@@ -1,17 +1,43 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { api } from "./api.js";
 
 export default function Navbar() {
 
   // Mobile menu open/close state.
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Login kiye hue user ka naam. Login nahi hai to null rehta hai
+  // aur "My Profile" hi dikhta hai (fallback).
+  const [userName, setUserName] = useState(null);
+
   // Current URL/path ko read karta hai.
   const location = useLocation();
 
   // React Router ke through navigation ke liye.
   const navigate = useNavigate();
+
+  // Navbar load hote hi logged-in user ka naam mangwa lete hain.
+  // Login nahi hai to error aayega, use chup-chap ignore kar dete hain
+  // (navbar tab bhi normal dikhna chahiye).
+  useEffect(() => {
+    let cancelled = false;
+
+    api
+      .get("/auth/me")
+      .then((data) => {
+        if (cancelled) return;
+        setUserName(data?.user?.name || null);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setUserName(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
 
 
   // Navbar ke saare navigation links.
@@ -56,7 +82,8 @@ export default function Navbar() {
 
     {
       to: "/profile",
-      label: "My Profile",
+      // Login ho gaya hai to user ka naam dikhao, warna "My Profile".
+      label: userName || "My Profile",
       icon: "👤",
       isProfile: true
     }
@@ -1191,14 +1218,6 @@ export default function Navbar() {
           }
 
 
-          .logo-mark {
-            width: 44px;
-            height: 44px;
-
-            border-radius: 13px;
-          }
-
-
           .logo-mark span {
             font-size: 16px;
           }
@@ -1215,5 +1234,3 @@ export default function Navbar() {
     </>
   );
 }
-
-

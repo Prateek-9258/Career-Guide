@@ -2,6 +2,38 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Myprofile.css";
 import Navbar from "./Navbar.jsx";
+import { api } from "./api.js";
+
+// Phone camera ki bahut badi photo server ki limit se badi ho sakti hai, isliye
+// sirf badi photo ko chhota (max 1280px) karke bhejte hain. Normal photo jaisi hai waisi jaati hai.
+const BIG_PHOTO_CHARS = 1500000;
+
+function shrinkImage(dataUrl, maxSide = 1280) {
+  if (dataUrl.length <= BIG_PHOTO_CHARS) return Promise.resolve(dataUrl);
+
+  return new Promise((resolve) => {
+    const img = new Image();
+
+    img.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
 export default function MyProfile() {
   const navigate = useNavigate();
 
@@ -32,62 +64,49 @@ export default function MyProfile() {
   const streamRef = useRef(null);
   const fileRef = useRef(null);
 
+  // API error ko alert me dikhata hai. Login khatam ho gaya ho to login page par bhejta hai.
+  const showError = (error) => {
+    alert(error.message);
+
+    if (error.status === 401) {
+      navigate("/");
+    }
+  };
+
   // ==============================
   // LOAD DATA
   // ==============================
 
   useEffect(() => {
-  const savedProfile = localStorage.getItem("careerVisionProfile");
-  const savedPhoto = localStorage.getItem("careerVisionProfilePhoto");
-  const loggedInUser = localStorage.getItem("loggedInUser");
+    let cancelled = false;
 
-  let userName = "";
+    Promise.all([api.get("/profile"), api.get("/quiz/latest")])
+      .then(([profileData, quizData]) => {
+        if (cancelled) return;
 
-  if (loggedInUser) {
-    try {
-      const user = JSON.parse(loggedInUser);
-      userName = user.name || "";
-    } catch {
-      userName = loggedInUser;
-    }
-  }
+        setProfile(profileData.profile);
+        setForm(profileData.profile);
 
-  if (savedProfile) {
-    const data = JSON.parse(savedProfile);
+        if (profileData.photo) {
+          setPhoto(profileData.photo);
+        }
 
-    const updatedProfile = {
-      ...data,
-      name: data.name || userName,
+        setQuizResult(quizData.quizResult);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+
+        // Login nahi hai ya login khatam ho gaya -> login page par bhejo.
+        if (error.status === 401) {
+          navigate("/", { replace: true });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      stopCamera();
     };
-
-    setProfile(updatedProfile);
-    setForm(updatedProfile);
-  } else {
-    const newProfile = {
-      name: userName,
-      className: "",
-      stream: "",
-      percentage: "",
-      interest: "",
-    };
-
-    setProfile(newProfile);
-    setForm(newProfile);
-  }
-
-  if (savedPhoto) {
-    setPhoto(savedPhoto);
-  }
-
-  try {
-    const savedQuiz = localStorage.getItem("careerVisionQuizResult");
-    if (savedQuiz) setQuizResult(JSON.parse(savedQuiz));
-  } catch {
-    setQuizResult(null);
-  }
-
-  return () => stopCamera();
-}, []);
+  }, [navigate]);
   
 
   // ==============================
@@ -99,7 +118,7 @@ export default function MyProfile() {
     setEditOpen(true);
   };
 
-  const saveProfile = () => {
+  const saveProfile = async () => {
     if (!form.name.trim()) {
       alert("Please enter your name.");
       return;
@@ -113,15 +132,23 @@ export default function MyProfile() {
       return;
     }
 
-    localStorage.setItem(
-      "careerVisionProfile",
-      JSON.stringify(form)
-    );
+    try {
+      const data = await api.put("/profile", {
+        name: form.name,
+        className: form.className,
+        stream: form.stream,
+        percentage: form.percentage,
+        interest: form.interest,
+        budget: form.budget ?? "",
+      });
 
-    setProfile(form);
-    setEditOpen(false);
+      setProfile(data.profile);
+      setEditOpen(false);
 
-    alert("Profile updated successfully! 🎉");
+      alert("Profile updated successfully! 🎉");
+    } catch (error) {
+      showError(error);
+    }
   };
 
   // ==============================
@@ -145,24 +172,25 @@ export default function MyProfile() {
     const reader = new FileReader();
 
     reader.onload = () => {
-      savePhoto(reader.result);
+      shrinkImage(reader.result).then(savePhoto);
     };
 
     reader.readAsDataURL(file);
   };
 
-  const savePhoto = (photoData) => {
-    localStorage.setItem(
-      "careerVisionProfilePhoto",
-      photoData
-    );
+  const savePhoto = async (photoData) => {
+    try {
+      await api.put("/profile/photo", { photo: photoData });
 
-    setPhoto(photoData);
-    setPhotoOpen(false);
+      setPhoto(photoData);
+      setPhotoOpen(false);
 
-    stopCamera();
+      stopCamera();
 
-    alert("Profile picture updated! 📸");
+      alert("Profile picture updated! 📸");
+    } catch (error) {
+      showError(error);
+    }
   };
 
   // ==============================
@@ -245,7 +273,7 @@ export default function MyProfile() {
   // PASSWORD
   // ==============================
 
-  const changePassword = () => {
+  const changePassword = async () => {
     if (
       !password.current ||
       !password.newPass ||
@@ -267,46 +295,44 @@ export default function MyProfile() {
       return;
     }
 
-    const savedPassword =
-      localStorage.getItem("careerVisionPassword");
+    try {
+      // Current password ki jaanch server par hoti hai.
+      await api.put("/auth/change-password", {
+        currentPassword: password.current,
+        newPassword: password.newPass,
+        confirmPassword: password.confirm,
+      });
 
-    if (
-      savedPassword &&
-      password.current !== savedPassword
-    ) {
-      alert("Current password is incorrect.");
-      return;
+      setPassword({
+        current: "",
+        newPass: "",
+        confirm: "",
+      });
+
+      setPasswordOpen(false);
+
+      alert("Password changed successfully! 🔐");
+    } catch (error) {
+      showError(error);
     }
-
-    localStorage.setItem(
-      "careerVisionPassword",
-      password.newPass
-    );
-
-    setPassword({
-      current: "",
-      newPass: "",
-      confirm: "",
-    });
-
-    setPasswordOpen(false);
-
-    alert("Password changed successfully! 🔐");
   };
 
   // ==============================
   // LOGOUT
   // ==============================
 
-  const logoutUser = () => {
+  const logoutUser = async () => {
     const confirmLogout = window.confirm(
       "Are you sure you want to logout?"
     );
 
     if (!confirmLogout) return;
 
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("isLoggedIn");
+    try {
+      await api.post("/auth/logout");
+    } catch {
+      // server na mile tab bhi user ko login page par bhej do
+    }
 
     alert("You have been logged out. 👋");
 
@@ -623,8 +649,14 @@ export default function MyProfile() {
 
             <div className="quiz-result">
 
-              <div className="score-circle">
-
+            <div
+              className="score-circle"
+                style={{
+                  "--final-score": `${
+                    Math.min(100, Math.max(0, Number(quizResult?.score) || 0)) * 3.6
+    }deg`,
+  }}
+>
                 <div className="score-inner">
                   <strong>
                     {quizResult ? `${quizResult.score}%` : "0%"}

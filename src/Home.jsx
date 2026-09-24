@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "./Navbar.jsx";
+import { api } from "./api.js";
 
 const careerDatabase = [
   {
@@ -129,6 +130,7 @@ export default function Home() {
 
   const [form, setForm] = useState({
     name: "",
+    className: "",
     stream: "",
     percentage: "",
     interest: "",
@@ -164,39 +166,26 @@ export default function Home() {
   };
 
   // Home ki details ko My Profile ke saved data me merge karta hai.
-  // Purana data (class, etc.) safe rehta hai, sirf Home ke fields update hote hain.
+  // Purana data (favorites, etc.) safe rehta hai, sirf Home ke fields update hote hain.
   const saveToProfile = () => {
-    let existing = {};
-
-    try {
-      const saved = localStorage.getItem("careerVisionProfile");
-      if (saved) existing = JSON.parse(saved) || {};
-    } catch {
-      existing = {};
-    }
-
-    const updatedProfile = {
-      ...existing,
-      name: form.name.trim(),
-      stream: form.stream,
-      percentage: form.percentage,
-      interest: form.interest,
-      budget: form.budget,
-    };
-
-    try {
-      localStorage.setItem(
-        "careerVisionProfile",
-        JSON.stringify(updatedProfile)
-      );
-    } catch {
-      // storage full / blocked ho to quiz phir bhi chalna chahiye
-    }
+    api
+      .put("/profile", {
+        name: form.name.trim(),
+        className: form.className,
+        stream: form.stream,
+        percentage: form.percentage,
+        interest: form.interest,
+        budget: form.budget,
+      })
+      .catch(() => {
+        // login nahi hai / server band ho to quiz phir bhi chalna chahiye
+      });
   };
 
   const startQuiz = () => {
     if (
       !form.name.trim() ||
+      !form.className ||
       !form.stream ||
       !form.percentage ||
       !form.interest ||
@@ -315,6 +304,26 @@ export default function Home() {
       })
       .sort((a, b) => b.score - a.score);
 
+    // Quiz result account me save hota hai (My Profile me "Quiz Completed" dikhane ke liye).
+    // Save na ho paye to bhi result screen dikhni chahiye.
+    const topCareer = scoredCareers[0];
+
+    if (topCareer) {
+      api
+        .post("/quiz", {
+          career: topCareer.name,
+          icon: topCareer.icon,
+          score: topCareer.score,
+          answers: quizAnswers,
+          results: scoredCareers.map(({ name, icon, score }) => ({
+            name,
+            icon,
+            score,
+          })),
+        })
+        .catch(() => {});
+    }
+
     setResults(scoredCareers);
     setPage("results");
 
@@ -329,6 +338,7 @@ export default function Home() {
 
     setForm({
       name: "",
+      className: "",
       stream: "",
       percentage: "",
       interest: "",
@@ -583,6 +593,24 @@ export default function Home() {
                         updateForm("name", e.target.value)
                       }
                     />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Class</label>
+
+                    <select
+                      value={form.className}
+                      onChange={(e) =>
+                        updateForm("className", e.target.value)
+                      }
+                    >
+                      <option value="">Select class</option>
+                      <option value="10th">10th</option>
+                      <option value="11th">11th</option>
+                      <option value="12th">12th</option>
+                      <option value="Graduation">Graduation</option>
+                      <option value="College Student">College Student</option>
+                    </select>
                   </div>
 
                   <div className="form-group">

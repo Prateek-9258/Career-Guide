@@ -8,6 +8,7 @@ import CareerDetails from "./CareerDetails.jsx";
 import CareerVisionDashboard from "./CareerVisionDashboard.jsx";
 import Comparisons from "./Comparisons.jsx";
 import MyProfile from "./MyProfile.jsx";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/career-vision" element={<CareerVisionDashboard />} />
         <Route path="/comparisons" element={<Comparisons />} />
         <Route path="/profile" element={<MyProfile />} />
+        
       </Routes>
     </BrowserRouter>
   );

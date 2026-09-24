@@ -5,6 +5,9 @@ import { useState, useEffect } from "react";
 // useNavigate: React Router ke through doosre page par jaane ke liye.
 import { useNavigate } from "react-router-dom";
 
+// Backend (MongoDB) se baat karne ke liye.
+import { api } from "./api.js";
+
 // Is string me poore login page ka CSS store hai.
 // Baad me <style>{styles}</style> ke through page par apply hota hai.
 const styles = `
@@ -1591,32 +1594,27 @@ if (savedEmail) {
 
 }, []);
 
-// Agar user pehle se logged in hai (localStorage me flag set hai),
+// Agar user pehle se logged in hai (server par valid login cookie hai),
 // to login/signup form dikhane ki zaroorat nahi — seedha app ke
-// andar bhej do. Ye check tab tak true rahega jab tak user khud
-// logout na kare (logout par localStorage clear/flag false hota hai).
+// andar bhej do. Logout karne par cookie hat jaati hai.
 useEffect(() => {
-const alreadyLoggedIn =
-localStorage.getItem("isLoggedIn") === "true";
+let cancelled = false;
 
-if (alreadyLoggedIn) {
-  navigate("/career-vision", { replace: true });
-}
+api
+  .get("/auth/me")
+  .then(() => {
+    if (!cancelled) {
+      navigate("/career-vision", { replace: true });
+    }
+  })
+  .catch(() => {
+    // Login nahi hai (ya server band hai) - form dikhta rahega.
+  });
 
-
-}, [navigate]);
-
-// localStorage me saved users ki list read karta hai.
-const getUsers = () => {
-try {
-return JSON.parse(
-localStorage.getItem("cv_users") ||
-"[]"
-);
-} catch {
-return [];
-}
+return () => {
+  cancelled = true;
 };
+}, [navigate]);
 
 // Basic email format validate karta hai.
 const isValidEmail = (email) =>
@@ -1673,6 +1671,25 @@ const switchToLogin = () => {
 setErrors({});
 setCapsLockOn(false);
 setIsSignup(false);
+};
+
+// Server ke validation errors ko form ke fields me dikhata hai.
+// Field-wise error na ho (server band, bahut zyada attempts, etc.) to sirf toast dikhta hai.
+const showServerError = (error, fieldMap) => {
+const fieldErrors = Object.entries(
+  error.errors || {}
+).filter(([field]) => fieldMap[field]);
+
+fieldErrors.forEach(([field, message]) => {
+  setFieldError(fieldMap[field], message);
+});
+
+showToast(
+  fieldErrors.length > 0
+    ? fieldErrors[0][1]
+    : error.message,
+  "error"
+);
 };
 
 // Login/signup successful hone ke baad common kaam.
@@ -1744,67 +1761,39 @@ if (
 // Button par loading state show karte hain.
 setLoading(true);
 
-// Demo delay ke baad localStorage ke users me login user find karte hain.
-setTimeout(() => {
-  const users = getUsers();
-
-  const user = users.find(
-    (item) =>
-      item.email === email &&
-      item.pass === loginPassword
-  );
-
-  if (!user) {
-    // User nahi mila to password field me error show hoga.
+// Backend se email + password check karwa ke login karte hain.
+api
+  .post("/auth/login", {
+    email,
+    password: loginPassword,
+  })
+  .then((data) => {
+    // Login successful hone par common success flow call hota hai.
+    finishAuth(data.user, data.message);
+  })
+  .catch((error) => {
     setLoading(false);
 
-    setFieldError(
-      "loginPassword",
-      "Invalid email or password."
-    );
+    if (error.status === 401) {
+      // Email ya password galat ho to password field me error show hoga.
+      setFieldError(
+        "loginPassword",
+        "Invalid email or password."
+      );
 
-    showToast(
-      "Invalid email or password.",
-      "error"
-    );
+      showToast(
+        "Invalid email or password.",
+        "error"
+      );
 
-    return;
-  }
+      return;
+    }
 
-  localStorage.setItem(
-    "cv_login",
-    "true"
-  );
-
-  localStorage.setItem(
-    "cv_name",
-    user.name
-  );
-
-  localStorage.setItem(
-    "cv_user",
-    JSON.stringify(user)
-  );
-
-  localStorage.setItem(
-    "loggedInUser",
-    JSON.stringify({
-      name: user.name,
-      email: user.email,
-    })
-  );
-
-  localStorage.setItem(
-    "isLoggedIn",
-    "true"
-  );
-
-  // Login successful hone par common success flow call hota hai.
-  finishAuth(
-    user,
-    `Welcome back ${user.name} 👋`
-  );
-}, 900);
+    showServerError(error, {
+      email: "loginEmail",
+      password: "loginPassword",
+    });
+  });
 
 
 };
@@ -1865,96 +1854,43 @@ if (
 
 setLoading(true);
 
-// Demo delay ke baad existing user aur new user create karte hain.
-setTimeout(() => {
-  const users = getUsers();
-
-  if (
-    users.some(
-      (user) =>
-        user.email === email
-    )
-  ) {
-    // Same email pehle se registered ho to signup stop karte hain.
-    setLoading(false);
-
-    setFieldError(
-      "signupEmail",
-      "Email already registered. Please login."
-    );
-
-    showToast(
-      "Email already registered.",
-      "error"
-    );
-
-    return;
-  }
-
-  const newUser = {
+// Backend par new account create karte hain.
+api
+  .post("/auth/register", {
     name,
     email,
-    pass: signupPassword,
-  };
+    password: signupPassword,
+    confirmPassword,
+  })
+  .then((data) => {
+    // Signup successful hone par common success flow call hota hai.
+    finishAuth(data.user, data.message);
+  })
+  .catch((error) => {
+    setLoading(false);
 
-  // New user ko existing users list me add kar rahe hain.
-  users.push(newUser);
+    if (error.status === 409) {
+      // Same email pehle se registered ho to signup stop karte hain.
+      setFieldError(
+        "signupEmail",
+        "Email already registered. Please login."
+      );
 
-  localStorage.setItem(
-    "cv_users",
-    JSON.stringify(users)
-  );
+      showToast(
+        "Email already registered.",
+        "error"
+      );
 
-  localStorage.setItem(
-    "cv_user",
-    JSON.stringify(newUser)
-  );
+      return;
+    }
 
-  localStorage.setItem(
-    "cv_login",
-    "true"
-  );
-
-  localStorage.setItem(
-    "cv_name",
-    name
-  );
-
-  localStorage.setItem(
-    "loggedInUser",
-    JSON.stringify({
-      name,
-      email,
-    })
-  );
-
-  localStorage.setItem(
-    "isLoggedIn",
-    "true"
-  );
-
-  localStorage.setItem(
-    "careerVisionPassword",
-    signupPassword
-  );
-
-  localStorage.setItem(
-    "careerVisionProfile",
-    JSON.stringify({
-      name,
-      className: "",
-      stream: "",
-      percentage: "",
-      interest: "",
-    })
-  );
-
-  // Signup successful hone par common success flow call hota hai.
-  finishAuth(
-    newUser,
-    `Welcome ${name}! Account created 🎉`
-  );
-}, 1100);
+    showServerError(error, {
+      name: "signupName",
+      email: "signupEmail",
+      password: "signupPassword",
+      confirmPassword: "confirmPassword",
+    });
+  });
 
 
 };

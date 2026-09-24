@@ -29,7 +29,7 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
-# Backend (server/)
+# Backend (backend/)
 node_modules/
-server/.env
+Backend/.env
 *.log

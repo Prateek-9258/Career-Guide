@@ -1,21 +1,27 @@
 import { useEffect, useState } from "react";
 import Navbar from "./Navbar.jsx";
+import { api } from "./api.js";
 
 export default function CareerVisionDashboard() {
   const [search, setSearch] = useState("");
   const [userName, setUserName] = useState("Explorer");
 
   useEffect(() => {
-    try {
-      const savedName = localStorage.getItem("cv_name");
-      const savedUser = JSON.parse(
-        localStorage.getItem("cv_user") || "{}"
-      );
+    let cancelled = false;
 
-      setUserName(savedName || savedUser?.name || "Explorer");
-    } catch {
-      setUserName("Explorer");
-    }
+    // Logged-in user ka naam server se aata hai (login nahi to "Explorer" hi dikhta hai).
+    api
+      .get("/auth/me")
+      .then((data) => {
+        if (!cancelled) {
+          setUserName(data.user?.name || "Explorer");
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const careerCards = [
