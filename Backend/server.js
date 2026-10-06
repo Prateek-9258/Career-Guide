@@ -1,4 +1,3 @@
-
 // ============================================================
 // server.js
 // Backend server yahin se start hota hai.
@@ -21,6 +20,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
 
 // API routes
@@ -249,6 +250,27 @@ app.use("/api", (req, res) => {
     `Route not found: ${req.method} ${req.originalUrl}`
   );
 
+});
+
+
+// ============================================================
+// FRONTEND (Vite build) SERVE KARNA
+// npm run build ke baad dist/ folder banta hai. Production mein
+// wahi folder yahan se serve hota hai, isliye frontend aur API
+// same domain par rehte hain (cookie / CORS ki problem nahi).
+// ============================================================
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const distPath = path.join(__dirname, "..", "dist");
+
+app.use(express.static(distPath));
+
+// React Router ke liye: koi bhi non-API URL par index.html do
+app.use((req, res, next) => {
+  if (req.method !== "GET") return next();
+  res.sendFile(path.join(distPath, "index.html"), (err) => {
+    if (err) next();
+  });
 });
 
 
