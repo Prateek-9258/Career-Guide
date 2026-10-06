@@ -127,7 +127,17 @@ if (isProduction) {
 
 
 // Security ke liye Helmet use karo
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        // College images bahar ki websites se aati hain, unhe allow karo
+        "img-src": ["'self'", "data:", "blob:", "https:"],
+      },
+    },
+  })
+);
 
 
 // Frontend ko backend API access karne ki permission
